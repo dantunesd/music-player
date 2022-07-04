@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"music-player/internal/playlist"
-	"music-player/internal/song"
-	"music-player/internal/user"
+	"music-player/package-by-feature/internal/playlist"
+	"music-player/package-by-feature/internal/song"
+	"music-player/package-by-feature/internal/user"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

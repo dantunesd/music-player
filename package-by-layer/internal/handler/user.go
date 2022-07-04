@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"music-player/internal/domain"
+	"music-player/package-by-layer/internal/domain"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"

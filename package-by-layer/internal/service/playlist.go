@@ -1,6 +1,6 @@
 package service
 
-import "music-player/internal/domain"
+import "music-player/package-by-layer/internal/domain"
 
 type PlaylistRepository interface {
 	Create(*domain.Playlist) (string, error)

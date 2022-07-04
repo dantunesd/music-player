@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"music-player/internal/domain"
+	"music-player/package-by-layer/internal/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
