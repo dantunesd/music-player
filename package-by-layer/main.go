@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"music-player/package-by-layer/infra"
+	"music-player/package-by-layer/infrastructure"
 	"music-player/package-by-layer/internal/handler"
 	"music-player/package-by-layer/internal/repository"
 	"music-player/package-by-layer/internal/service"
@@ -25,9 +25,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	songClient := infra.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "song"}
-	playlistClient := infra.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "playlist"}
-	userClient := infra.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "user"}
+	songClient := infrastructure.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "song"}
+	playlistClient := infrastructure.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "playlist"}
+	userClient := infrastructure.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "user"}
 
 	songRepository := repository.Song{Database: &songClient}
 	playlistRepository := repository.Playlist{Database: &playlistClient}
