@@ -2,17 +2,23 @@ package service
 
 import "music-player/package-by-layer/internal/domain"
 
-type SongRepository interface {
+type songRepository interface {
 	Create(*domain.Song) (string, error)
 	GetAll() ([]*domain.Song, error)
 	Get(id string) (*domain.Song, error)
 }
 
-type Song struct {
-	Repository SongRepository
+type song struct {
+	repository songRepository
 }
 
-func (s *Song) Create(name, artistName, albumName string, number int) (*domain.Song, error) {
+func NewSong(repository songRepository) *song {
+	return &song{
+		repository: repository,
+	}
+}
+
+func (s *song) Create(name, artistName, albumName string, number int) (*domain.Song, error) {
 	song := domain.Song{
 		Name:       name,
 		ArtistName: artistName,
@@ -20,7 +26,7 @@ func (s *Song) Create(name, artistName, albumName string, number int) (*domain.S
 		Number:     number,
 	}
 
-	id, err := s.Repository.Create(&song)
+	id, err := s.repository.Create(&song)
 	if err != nil {
 		return nil, err
 	}
@@ -29,10 +35,10 @@ func (s *Song) Create(name, artistName, albumName string, number int) (*domain.S
 	return &song, nil
 }
 
-func (s *Song) Get(id string) (*domain.Song, error) {
-	return s.Repository.Get(id)
+func (s *song) Get(id string) (*domain.Song, error) {
+	return s.repository.Get(id)
 }
 
-func (s *Song) GetAll() ([]*domain.Song, error) {
-	return s.Repository.GetAll()
+func (s *song) GetAll() ([]*domain.Song, error) {
+	return s.repository.GetAll()
 }

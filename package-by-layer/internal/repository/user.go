@@ -4,20 +4,26 @@ import (
 	"music-player/package-by-layer/internal/domain"
 )
 
-type User struct {
-	Database Database
+type user struct {
+	database database
 }
 
-func (u *User) Create(user *domain.User) (string, error) {
-	return u.Database.Create(&user)
+func NewUser(database database) *user {
+	return &user{
+		database: database,
+	}
 }
 
-func (u *User) Get(id string) (*domain.User, error) {
+func (u *user) Create(user *domain.User) (string, error) {
+	return u.database.Create(&user)
+}
+
+func (u *user) Get(id string) (*domain.User, error) {
 	var user domain.User
-	return &user, u.Database.Get("_id", id, &user)
+	return &user, u.database.Get("_id", id, &user)
 }
 
-func (u *User) GetAll() ([]*domain.User, error) {
+func (u *user) GetAll() ([]*domain.User, error) {
 	var user []*domain.User
-	return user, u.Database.GetAll(&user)
+	return user, u.database.GetAll(&user)
 }

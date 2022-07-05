@@ -24,22 +24,21 @@ func main() {
 	if err := mongoClient.Ping(context.Background(), nil); err != nil {
 		log.Fatal(err)
 	}
+	songClient := infrastructure.NewMongoDBAdapter(mongoClient, "music-player", "song")
+	playlistClient := infrastructure.NewMongoDBAdapter(mongoClient, "music-player", "playlist")
+	userClient := infrastructure.NewMongoDBAdapter(mongoClient, "music-player", "user")
 
-	songClient := infrastructure.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "song"}
-	playlistClient := infrastructure.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "playlist"}
-	userClient := infrastructure.MongoDBAdapter{Client: mongoClient, DBName: "music-player", Collection: "user"}
+	songRepository := repository.NewSong(songClient)
+	playlistRepository := repository.NewPlaylist(playlistClient)
+	userRepository := repository.NewUser(userClient)
 
-	songRepository := repository.Song{Database: &songClient}
-	playlistRepository := repository.Playlist{Database: &playlistClient}
-	userRepository := repository.User{Database: &userClient}
+	songService := service.NewSong(songRepository)
+	userService := service.NewUser(userRepository)
+	playlistService := service.NewPlaylist(playlistRepository)
 
-	songService := service.Song{Repository: &songRepository}
-	userService := service.User{Repository: &userRepository}
-	playlistService := service.Playlist{Repository: &playlistRepository}
-
-	songHandler := handler.Song{Service: &songService}
-	userHandler := handler.User{Service: &userService}
-	playlistHandler := handler.Playlist{Service: &playlistService}
+	songHandler := handler.NewSong(songService)
+	userHandler := handler.NewUser(userService)
+	playlistHandler := handler.NewPlaylist(playlistService)
 
 	app := fiber.New()
 	app.Use(recover.New())

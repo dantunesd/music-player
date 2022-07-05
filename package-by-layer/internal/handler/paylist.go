@@ -7,17 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type PlaylistService interface {
+type playlistService interface {
 	Create(userId, name string, songs []string) (*domain.Playlist, error)
 	Get(id string) (*domain.Playlist, error)
 	GetAll() ([]*domain.Playlist, error)
 }
 
-type Playlist struct {
-	Service PlaylistService
+type playlist struct {
+	Service playlistService
 }
 
-func (h *Playlist) Create(c *fiber.Ctx) error {
+func NewPlaylist(service playlistService) *playlist {
+	return &playlist{
+		Service: service,
+	}
+}
+
+func (h *playlist) Create(c *fiber.Ctx) error {
 	userId := c.Params("userId")
 
 	type Playlist struct {
@@ -43,7 +49,7 @@ func (h *Playlist) Create(c *fiber.Ctx) error {
 	return c.Status(201).JSON(response)
 }
 
-func (h *Playlist) GetAll(c *fiber.Ctx) error {
+func (h *playlist) GetAll(c *fiber.Ctx) error {
 	response, err := h.Service.GetAll()
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
@@ -52,7 +58,7 @@ func (h *Playlist) GetAll(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
-func (h *Playlist) Get(c *fiber.Ctx) error {
+func (h *playlist) Get(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	response, err := h.Service.Get(id)

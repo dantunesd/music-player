@@ -7,17 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserService interface {
+type userService interface {
 	Create(name string) (*domain.User, error)
 	Get(id string) (*domain.User, error)
 	GetAll() ([]*domain.User, error)
 }
 
-type User struct {
-	Service UserService
+type user struct {
+	Service userService
 }
 
-func (h *User) Create(c *fiber.Ctx) error {
+func NewUser(service userService) *user {
+	return &user{
+		Service: service,
+	}
+}
+
+func (h *user) Create(c *fiber.Ctx) error {
 	type CreateUserRequest struct {
 		Name string `json:"name" validate:"required"`
 	}
@@ -40,7 +46,7 @@ func (h *User) Create(c *fiber.Ctx) error {
 	return c.Status(201).JSON(response)
 }
 
-func (h *User) GetAll(c *fiber.Ctx) error {
+func (h *user) GetAll(c *fiber.Ctx) error {
 	response, err := h.Service.GetAll()
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
@@ -49,7 +55,7 @@ func (h *User) GetAll(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
-func (h *User) Get(c *fiber.Ctx) error {
+func (h *user) Get(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	response, err := h.Service.Get(id)

@@ -7,17 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type SongService interface {
+type songService interface {
 	Create(name, artistName, albumName string, number int) (*domain.Song, error)
 	Get(id string) (*domain.Song, error)
 	GetAll() ([]*domain.Song, error)
 }
 
-type Song struct {
-	Service SongService
+type song struct {
+	Service songService
 }
 
-func (h *Song) Create(c *fiber.Ctx) error {
+func NewSong(service songService) *song {
+	return &song{
+		Service: service,
+	}
+}
+
+func (h *song) Create(c *fiber.Ctx) error {
 	type Song struct {
 		Name       string `json:"name" validate:"required"`
 		ArtistName string `json:"artist_name" validate:"required"`
@@ -43,7 +49,7 @@ func (h *Song) Create(c *fiber.Ctx) error {
 	return c.Status(201).JSON(response)
 }
 
-func (h *Song) GetAll(c *fiber.Ctx) error {
+func (h *song) GetAll(c *fiber.Ctx) error {
 	response, err := h.Service.GetAll()
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
@@ -52,7 +58,7 @@ func (h *Song) GetAll(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
-func (h *Song) Get(c *fiber.Ctx) error {
+func (h *song) Get(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	response, err := h.Service.Get(id)

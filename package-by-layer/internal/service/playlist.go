@@ -2,24 +2,30 @@ package service
 
 import "music-player/package-by-layer/internal/domain"
 
-type PlaylistRepository interface {
+type playlistRepository interface {
 	Create(*domain.Playlist) (string, error)
 	GetAll() ([]*domain.Playlist, error)
 	Get(id string) (*domain.Playlist, error)
 }
 
-type Playlist struct {
-	Repository PlaylistRepository
+type playlist struct {
+	repository playlistRepository
 }
 
-func (s *Playlist) Create(userId, name string, songs []string) (*domain.Playlist, error) {
+func NewPlaylist(repository playlistRepository) *playlist {
+	return &playlist{
+		repository: repository,
+	}
+}
+
+func (s *playlist) Create(userId, name string, songs []string) (*domain.Playlist, error) {
 	Playlist := domain.Playlist{
 		UserID: userId,
 		Name:   name,
 		Songs:  songs,
 	}
 
-	id, err := s.Repository.Create(&Playlist)
+	id, err := s.repository.Create(&Playlist)
 	if err != nil {
 		return nil, err
 	}
@@ -28,10 +34,10 @@ func (s *Playlist) Create(userId, name string, songs []string) (*domain.Playlist
 	return &Playlist, nil
 }
 
-func (s *Playlist) Get(id string) (*domain.Playlist, error) {
-	return s.Repository.Get(id)
+func (s *playlist) Get(id string) (*domain.Playlist, error) {
+	return s.repository.Get(id)
 }
 
-func (s *Playlist) GetAll() ([]*domain.Playlist, error) {
-	return s.Repository.GetAll()
+func (s *playlist) GetAll() ([]*domain.Playlist, error) {
+	return s.repository.GetAll()
 }
