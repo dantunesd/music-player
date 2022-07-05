@@ -30,14 +30,14 @@ func main() {
 	playlistClient := infrastructure.NewMongoDBAdapter(mongoClient, "music-player", "playlist")
 	userClient := infrastructure.NewMongoDBAdapter(mongoClient, "music-player", "user")
 
-	songRepository := song.NewRepositoryImpl(songClient)
-	songService := song.NewServiceImpl(songRepository)
+	songRepository := song.NewRepository(songClient)
+	songService := song.NewService(songRepository)
 
-	userRepository := user.NewRepositoryImpl(userClient)
-	userService := user.NewServiceImpl(userRepository)
+	userRepository := user.NewRepository(userClient)
+	userService := user.NewService(userRepository)
 
-	playlistRepository := playlist.NewRepositoryImpl(playlistClient)
-	playlistService := playlist.NewServiceImpl(playlistRepository)
+	playlistRepository := playlist.NewRepository(playlistClient)
+	playlistService := playlist.NewService(playlistRepository)
 
 	songHandler := handler.NewSong(songService)
 	userHandler := handler.NewUser(userService)

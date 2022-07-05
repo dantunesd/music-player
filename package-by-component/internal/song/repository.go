@@ -10,7 +10,7 @@ type repositoryImpl struct {
 	database database
 }
 
-func NewRepositoryImpl(database database) *repositoryImpl {
+func NewRepository(database database) *repositoryImpl {
 	return &repositoryImpl{
 		database: database,
 	}

@@ -10,7 +10,7 @@ type serviceImpl struct {
 	repository repository
 }
 
-func NewServiceImpl(repository repository) *serviceImpl {
+func NewService(repository repository) *serviceImpl {
 	return &serviceImpl{
 		repository: repository,
 	}
