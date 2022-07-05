@@ -1,25 +1,31 @@
 package playlist
 
-type Database interface {
+type database interface {
 	Get(fieldName, fieldValue string, output interface{}) error
 	Create(content interface{}) (string, error)
 	GetAll(output interface{}) error
 }
 
-type RepositoryImpl struct {
-	Database Database
+type repositoryImpl struct {
+	database database
 }
 
-func (r *RepositoryImpl) Create(playlist *Playlist) (string, error) {
-	return r.Database.Create(&playlist)
+func NewRepository(database database) *repositoryImpl {
+	return &repositoryImpl{
+		database: database,
+	}
 }
 
-func (r *RepositoryImpl) Get(id string) (*Playlist, error) {
-	var playlist Playlist
-	return &playlist, r.Database.Get("_id", id, &playlist)
+func (r *repositoryImpl) Create(playlist *playlist) (string, error) {
+	return r.database.Create(&playlist)
 }
 
-func (r *RepositoryImpl) GetAll() ([]*Playlist, error) {
-	var playlist []*Playlist
-	return playlist, r.Database.GetAll(&playlist)
+func (r *repositoryImpl) Get(id string) (*playlist, error) {
+	var playlist playlist
+	return &playlist, r.database.Get("_id", id, &playlist)
+}
+
+func (r *repositoryImpl) GetAll() ([]*playlist, error) {
+	var playlist []*playlist
+	return playlist, r.database.GetAll(&playlist)
 }

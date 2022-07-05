@@ -1,25 +1,31 @@
 package user
 
-type Database interface {
+type database interface {
 	Get(fieldName, fieldValue string, output interface{}) error
 	Create(content interface{}) (string, error)
 	GetAll(output interface{}) error
 }
 
-type RepositoryImpl struct {
-	Database Database
+type repositoryImpl struct {
+	database database
 }
 
-func (r *RepositoryImpl) Create(user *User) (string, error) {
-	return r.Database.Create(&user)
+func NewRepository(database database) *repositoryImpl {
+	return &repositoryImpl{
+		database: database,
+	}
 }
 
-func (r *RepositoryImpl) Get(id string) (*User, error) {
-	var user User
-	return &user, r.Database.Get("_id", id, &user)
+func (r *repositoryImpl) Create(user *user) (string, error) {
+	return r.database.Create(&user)
 }
 
-func (r *RepositoryImpl) GetAll() ([]*User, error) {
-	var user []*User
-	return user, r.Database.GetAll(&user)
+func (r *repositoryImpl) Get(id string) (*user, error) {
+	var user user
+	return &user, r.database.Get("_id", id, &user)
+}
+
+func (r *repositoryImpl) GetAll() ([]*user, error) {
+	var user []*user
+	return user, r.database.GetAll(&user)
 }

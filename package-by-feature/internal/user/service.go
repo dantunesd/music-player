@@ -1,19 +1,25 @@
 package user
 
-type Repository interface {
-	Create(user *User) (string, error)
-	GetAll() ([]*User, error)
-	Get(id string) (*User, error)
+type repository interface {
+	Create(user *user) (string, error)
+	GetAll() ([]*user, error)
+	Get(id string) (*user, error)
 }
 
-type ServiceImpl struct {
-	Repository Repository
+type serviceImpl struct {
+	repository repository
 }
 
-func (s *ServiceImpl) Create(name string) (*User, error) {
-	user := User{Name: name}
+func NewService(repository repository) *serviceImpl {
+	return &serviceImpl{
+		repository: repository,
+	}
+}
 
-	id, err := s.Repository.Create(&user)
+func (s *serviceImpl) Create(name string) (*user, error) {
+	user := user{Name: name}
+
+	id, err := s.repository.Create(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -22,10 +28,10 @@ func (s *ServiceImpl) Create(name string) (*User, error) {
 	return &user, nil
 }
 
-func (s *ServiceImpl) Get(id string) (*User, error) {
-	return s.Repository.Get(id)
+func (s *serviceImpl) Get(id string) (*user, error) {
+	return s.repository.Get(id)
 }
 
-func (s *ServiceImpl) GetAll() ([]*User, error) {
-	return s.Repository.GetAll()
+func (s *serviceImpl) GetAll() ([]*user, error) {
+	return s.repository.GetAll()
 }

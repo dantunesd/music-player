@@ -1,35 +1,41 @@
 package playlist
 
-type Repository interface {
-	Create(*Playlist) (string, error)
-	GetAll() ([]*Playlist, error)
-	Get(id string) (*Playlist, error)
+type repository interface {
+	Create(*playlist) (string, error)
+	GetAll() ([]*playlist, error)
+	Get(id string) (*playlist, error)
 }
 
-type ServiceImpl struct {
-	Repository Repository
+type serviceImpl struct {
+	repository repository
 }
 
-func (s *ServiceImpl) Create(userId, name string, songs []string) (*Playlist, error) {
-	Playlist := Playlist{
+func NewService(repository repository) *serviceImpl {
+	return &serviceImpl{
+		repository: repository,
+	}
+}
+
+func (s *serviceImpl) Create(userId, name string, songs []string) (*playlist, error) {
+	playlist := playlist{
 		UserID: userId,
 		Name:   name,
 		Songs:  songs,
 	}
 
-	id, err := s.Repository.Create(&Playlist)
+	id, err := s.repository.Create(&playlist)
 	if err != nil {
 		return nil, err
 	}
 
-	Playlist.ID = id
-	return &Playlist, nil
+	playlist.ID = id
+	return &playlist, nil
 }
 
-func (s *ServiceImpl) Get(id string) (*Playlist, error) {
-	return s.Repository.Get(id)
+func (s *serviceImpl) Get(id string) (*playlist, error) {
+	return s.repository.Get(id)
 }
 
-func (s *ServiceImpl) GetAll() ([]*Playlist, error) {
-	return s.Repository.GetAll()
+func (s *serviceImpl) GetAll() ([]*playlist, error) {
+	return s.repository.GetAll()
 }

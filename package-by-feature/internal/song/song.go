@@ -1,6 +1,6 @@
 package song
 
-type Song struct {
+type song struct {
 	ID         string `json:"id" bson:"_id,omitempty"`
 	ArtistName string `json:"artist_name"`
 	AlbumName  string `json:"album_name"`

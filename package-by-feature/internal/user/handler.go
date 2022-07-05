@@ -5,23 +5,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type Service interface {
-	Create(name string) (*User, error)
-	Get(id string) (*User, error)
-	GetAll() ([]*User, error)
+type service interface {
+	Create(name string) (*user, error)
+	Get(id string) (*user, error)
+	GetAll() ([]*user, error)
 }
 
-type Handler struct {
-	Service Service
+type handler struct {
+	service service
 }
 
-func (h *Handler) Create(c *fiber.Ctx) error {
-	type CreateUserRequest struct {
+func NewHandler(service service) *handler {
+	return &handler{
+		service: service,
+	}
+}
+
+func (h *handler) Create(c *fiber.Ctx) error {
+	type Request struct {
 		Name string `json:"name" validate:"required"`
 	}
 
-	var request CreateUserRequest
-
+	var request Request
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
@@ -30,7 +35,7 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	response, err := h.Service.Create(request.Name)
+	response, err := h.service.Create(request.Name)
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
@@ -38,8 +43,8 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 	return c.Status(201).JSON(response)
 }
 
-func (h *Handler) GetAll(c *fiber.Ctx) error {
-	response, err := h.Service.GetAll()
+func (h *handler) GetAll(c *fiber.Ctx) error {
+	response, err := h.service.GetAll()
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
@@ -47,10 +52,10 @@ func (h *Handler) GetAll(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
-func (h *Handler) Get(c *fiber.Ctx) error {
+func (h *handler) Get(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	response, err := h.Service.Get(id)
+	response, err := h.service.Get(id)
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}

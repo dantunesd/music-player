@@ -1,24 +1,30 @@
 package song
 
-type Repository interface {
-	Create(*Song) (string, error)
-	GetAll() ([]*Song, error)
-	Get(id string) (*Song, error)
+type repository interface {
+	Create(*song) (string, error)
+	GetAll() ([]*song, error)
+	Get(id string) (*song, error)
 }
 
-type ServiceImpl struct {
-	Repository Repository
+type serviceImpl struct {
+	repository repository
 }
 
-func (s *ServiceImpl) Create(name, artistName, albumName string, number int) (*Song, error) {
-	song := Song{
+func NewService(repository repository) *serviceImpl {
+	return &serviceImpl{
+		repository: repository,
+	}
+}
+
+func (s *serviceImpl) Create(name, artistName, albumName string, number int) (*song, error) {
+	song := song{
 		Name:       name,
 		ArtistName: artistName,
 		AlbumName:  albumName,
 		Number:     number,
 	}
 
-	id, err := s.Repository.Create(&song)
+	id, err := s.repository.Create(&song)
 	if err != nil {
 		return nil, err
 	}
@@ -27,10 +33,10 @@ func (s *ServiceImpl) Create(name, artistName, albumName string, number int) (*S
 	return &song, nil
 }
 
-func (s *ServiceImpl) Get(id string) (*Song, error) {
-	return s.Repository.Get(id)
+func (s *serviceImpl) Get(id string) (*song, error) {
+	return s.repository.Get(id)
 }
 
-func (s *ServiceImpl) GetAll() ([]*Song, error) {
-	return s.Repository.GetAll()
+func (s *serviceImpl) GetAll() ([]*song, error) {
+	return s.repository.GetAll()
 }

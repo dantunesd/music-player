@@ -8,35 +8,43 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type MongoDBAdapter struct {
-	Client     *mongo.Client
-	DBName     string
-	Collection string
+type mongoDBAdapter struct {
+	client     *mongo.Client
+	dbName     string
+	collection string
 }
 
-func (d *MongoDBAdapter) Get(fieldName, fieldValue string, output interface{}) error {
+func NewMongoDBAdapter(client *mongo.Client, dbName, collection string) *mongoDBAdapter {
+	return &mongoDBAdapter{
+		client:     client,
+		dbName:     dbName,
+		collection: collection,
+	}
+}
+
+func (d *mongoDBAdapter) Get(fieldName, fieldValue string, output interface{}) error {
 	return d.findOne(fieldName, fieldValue, output)
 }
 
-func (d *MongoDBAdapter) Create(content interface{}) (string, error) {
+func (d *mongoDBAdapter) Create(content interface{}) (string, error) {
 	return d.insertOne(content)
 }
 
-func (d *MongoDBAdapter) GetAll(output interface{}) error {
+func (d *mongoDBAdapter) GetAll(output interface{}) error {
 	return d.find(output)
 }
 
-func (d *MongoDBAdapter) findOne(fieldName, fieldValue string, output interface{}) error {
+func (d *mongoDBAdapter) findOne(fieldName, fieldValue string, output interface{}) error {
 	objectId, _ := primitive.ObjectIDFromHex(fieldValue)
 	return d.getCollection().FindOne(context.TODO(), bson.M{fieldName: objectId}).Decode(output)
 }
 
-func (d *MongoDBAdapter) insertOne(output interface{}) (string, error) {
+func (d *mongoDBAdapter) insertOne(output interface{}) (string, error) {
 	result, err := d.getCollection().InsertOne(context.TODO(), output)
 	return d.getIDFromResult(result, err)
 }
 
-func (d *MongoDBAdapter) find(output interface{}) error {
+func (d *mongoDBAdapter) find(output interface{}) error {
 	cursor, err := d.getCollection().Find(context.TODO(), bson.D{})
 	if err != nil {
 		return err
@@ -44,11 +52,11 @@ func (d *MongoDBAdapter) find(output interface{}) error {
 	return cursor.All(context.TODO(), output)
 }
 
-func (d *MongoDBAdapter) getCollection() *mongo.Collection {
-	return d.Client.Database(d.DBName).Collection(d.Collection)
+func (d *mongoDBAdapter) getCollection() *mongo.Collection {
+	return d.client.Database(d.dbName).Collection(d.collection)
 }
 
-func (d *MongoDBAdapter) getIDFromResult(result *mongo.InsertOneResult, err error) (string, error) {
+func (d *mongoDBAdapter) getIDFromResult(result *mongo.InsertOneResult, err error) (string, error) {
 	if err != nil {
 		return "", err
 	}

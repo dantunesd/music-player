@@ -1,6 +1,6 @@
 package playlist
 
-type Playlist struct {
+type playlist struct {
 	ID     string   `json:"id" bson:"_id,omitempty"`
 	UserID string   `json:"user_id"`
 	Name   string   `json:"name"`

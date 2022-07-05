@@ -1,25 +1,31 @@
 package song
 
-type Database interface {
+type database interface {
 	Get(fieldName, fieldValue string, output interface{}) error
 	Create(content interface{}) (string, error)
 	GetAll(output interface{}) error
 }
 
-type RepositoryImpl struct {
-	Database Database
+type repositoryImpl struct {
+	database database
 }
 
-func (r RepositoryImpl) Create(song *Song) (string, error) {
-	return r.Database.Create(&song)
+func NewRepository(database database) *repositoryImpl {
+	return &repositoryImpl{
+		database: database,
+	}
 }
 
-func (r RepositoryImpl) Get(id string) (*Song, error) {
-	var song Song
-	return &song, r.Database.Get("_id", id, &song)
+func (r *repositoryImpl) Create(song *song) (string, error) {
+	return r.database.Create(&song)
 }
 
-func (r RepositoryImpl) GetAll() ([]*Song, error) {
-	var song []*Song
-	return song, r.Database.GetAll(&song)
+func (r *repositoryImpl) Get(id string) (*song, error) {
+	var song song
+	return &song, r.database.Get("_id", id, &song)
+}
+
+func (r *repositoryImpl) GetAll() ([]*song, error) {
+	var song []*song
+	return song, r.database.GetAll(&song)
 }
